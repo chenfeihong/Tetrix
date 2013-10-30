@@ -1,18 +1,13 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2013-10-30T05:49:56
-#
-#-------------------------------------------------
+QT += widgets
 
-QT       += core gui
+HEADERS       = tetrixboard.h \
+                tetrixpiece.h \
+                tetrixwindow.h
+SOURCES       = main.cpp \
+                tetrixboard.cpp \
+                tetrixpiece.cpp \
+                tetrixwindow.cpp
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
-TARGET = tetrix
-TEMPLATE = app
-
-
-SOURCES += main.cpp\
-        mainwindow.cpp
-
-HEADERS  += mainwindow.h
+# install
+target.path = $$[QT_INSTALL_EXAMPLES]/widgets/widgets/tetrix
+INSTALLS += target
