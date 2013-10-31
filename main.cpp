@@ -37,18 +37,20 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#include <QtWidgets>
-
+#include <QApplication>
 #include <stdlib.h>
-
-#include "tetrixwindow.h"
+#include <QDebug>
+#include <QTime>
+#include "tetrixpiece.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    TetrixWindow window;
-    window.show();
+
+    //初始化随机数种子
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
+
+
+
     return app.exec();
 }

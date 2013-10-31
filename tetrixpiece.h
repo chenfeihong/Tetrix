@@ -4,7 +4,7 @@
 //改形状的顺序与coordsTable所对应的形状一致
 enum TetrixShape {NOShape,IShape,OShape,TShape,LShape,JShape,SShape,ZShape};
 //朝向 coordsTable 从上之下的朝向均为顺时针
-enum TetrixDirection {Up,Rigth,Down,Let};
+enum TetrixDirection {UP,RIGHT,DOWN,LEFT};
 
 class TetrixPiece
 {
@@ -12,12 +12,19 @@ public:
     //初始化
     TetrixPiece(){setShape(NOShape);}
     //设置Shape
-    void setShape(TetrixShape tetirxShape);
+    void setShape(TetrixShape tetrixShape,TetrixDirection tetrixShape = UP);
     void setRandomShape();
+    //顺时针旋转
+    TetrixPiece rotateRight() const;
+    //逆时针选择
+    TetrixPiece rotateLeft() const;
+
 
 private:
-    TetrixPiece pieceShape;
-    TetrixDirection peieceDirection;
+    TetrixShape pieceShape;
+    TetrixDirection pieceDirection;
+    //当前形状
+    int coords[4][4];
 };
 
 #endif // TETRIXPIECE_H
