@@ -52,6 +52,7 @@ int main(int argc, char *argv[])
 
     TetrixBoard board;
     board.setFixedSize(400,880);
+
     board.show();
 
     return app.exec();
