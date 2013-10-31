@@ -60,16 +60,16 @@ static const int coordsTable[7][4][4][4] = {
  * @param tetrixShape
  * 设置形状，默认为第一个 UP
  */
-void TetrixPiece::setShape(TetrixShape tetrixShape){
+void TetrixPiece::setShape(TetrixShape tetrixShape,TetrixDirection tetrixDirection){
 
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
-            coords[i][j] = coordsTable[tetrixShape][UP][i][j];
+            coords[i][j] = coordsTable[tetrixShape][tetrixDirection][i][j];
         }
     }
 
     pieceShape = tetrixShape;
-    pieceDirection = UP;
+    pieceDirection = tetrixDirection;
 
 }
 
@@ -85,17 +85,17 @@ void TetrixPiece::setRandomShape(){
  * @brief TetrixPiece::rotateLeft
  * 逆时针旋转
  */
-void TetrixPiece::rotateLeft(){
+TetrixPiece TetrixPiece::rotateLeft() const{
     TetrixPiece result;
     result.pieceShape = pieceShape;
-    pieceDirection -= 1;
-    if(pieceDirection < 0){
-        pieceDirection = LEFT;
+    result.pieceDirection = TetrixDirection(pieceDirection + 1);
+    if(result.pieceDirection < 0){
+        result.pieceDirection = LEFT;
     }
-    result.pieceDirection = pieceDirection;
+
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
-            result.coords[i][j] = coordsTable[tetrixShape][pieceDirection][i][j];
+            result.coords[i][j] = coordsTable[pieceShape][(int)result.pieceDirection][i][j];
         }
     }
     return result;
@@ -105,17 +105,17 @@ void TetrixPiece::rotateLeft(){
  * @brief TetrixPiece::rotateRight
  * 顺时针旋转
  */
-void TetrixPiece::rotateRight(){
+TetrixPiece TetrixPiece::rotateRight() const{
     TetrixPiece result;
     result.pieceShape = pieceShape;
-    pieceDirection += 1;
-    if(pieceDirection > 3){
-        pieceDirection = UP;
+    result.pieceDirection = TetrixDirection(pieceDirection + 1);
+    if(result.pieceDirection > 3){
+        result.pieceDirection = UP;
     }
-    result.pieceDirection = pieceDirection;
+
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
-            result.coords[i][j] = coordsTable[tetrixShape][pieceDirection][i][j];
+            result.coords[i][j] = coordsTable[pieceShape][result.pieceDirection][i][j];
         }
     }
     return result;

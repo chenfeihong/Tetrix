@@ -41,7 +41,7 @@
 #include <stdlib.h>
 #include <QDebug>
 #include <QTime>
-#include "tetrixpiece.h"
+#include "tetrixboard.h"
 
 int main(int argc, char *argv[])
 {
@@ -50,7 +50,9 @@ int main(int argc, char *argv[])
     //初始化随机数种子
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
 
-
+    TetrixBoard board;
+    board.setFixedSize(400,880);
+    board.show();
 
     return app.exec();
 }

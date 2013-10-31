@@ -12,8 +12,10 @@ public:
     //初始化
     TetrixPiece(){setShape(NOShape);}
     //设置Shape
-    void setShape(TetrixShape tetrixShape,TetrixDirection tetrixShape = UP);
+    void setShape(TetrixShape tetrixShape,TetrixDirection tetrixDirection = UP);
     void setRandomShape();
+    TetrixShape shape(){return pieceShape;}
+    TetrixDirection direction(){return pieceDirection;}
     //顺时针旋转
     TetrixPiece rotateRight() const;
     //逆时针选择
