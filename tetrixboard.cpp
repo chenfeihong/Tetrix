@@ -22,7 +22,6 @@ void TetrixBoard::paintEvent(QPaintEvent *event){
 
     QFrame::paintEvent(event);
     QPainter painter(this);
-    qDebug() << "Start:" << "CurX:" << curX << "CurY:" << curY;
     //画出一个形状
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
@@ -31,7 +30,6 @@ void TetrixBoard::paintEvent(QPaintEvent *event){
             }
             int x = (j + curX) * squareWidth();
             int y = (i + curY) * squareHeight();
-            qDebug() << x << "," << y;
             drawSquare(painter,x,y,currentPiece.shape());
         }
     }
@@ -50,7 +48,7 @@ void TetrixBoard::keyPressEvent(QKeyEvent *event){
         tryMove(currentPiece,curX,curY+1);
         break;
     case Qt::Key_Up:
-        tryMove(currentPiece.rotateRight(),curX,curY);
+        tryMove(currentPiece,curX,curY - 1);
         break;
     case Qt::Key_Space:
         tryMove(currentPiece.rotateLeft(),curX,curY);
@@ -68,6 +66,25 @@ void TetrixBoard::keyPressEvent(QKeyEvent *event){
  * @return
  */
 bool TetrixBoard::tryMove(const TetrixPiece &newPiece, int newX, int newY){
+
+    TetrixPiece tempPiece = newPiece;
+    //判断是否超出边界
+    if(newX < 0|| newY < 0 ){
+        return false;
+    }
+    for(int i = 0; i < 4; i++){
+        for(int j = 0; j < 4; j++){
+            if(tempPiece.value(i,j) == 0){
+                continue;
+            }
+            if((i + newY) >= BoardHeight){
+                return false;
+            }else if((j + newX) >= BoardWidth){
+                return false;
+            }
+        }
+    }
+
     currentPiece = newPiece;
     curX = newX;
     curY = newY;
