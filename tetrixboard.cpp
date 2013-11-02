@@ -14,6 +14,7 @@ static const QRgb colorTable[8] = {
 TetrixBoard::TetrixBoard(QWidget *parent) :
     QFrame(parent)
 {
+    clearBoard();
     currentPiece.setShape(SShape,UP);
     curX = 0;
     curY = 0;
@@ -23,7 +24,17 @@ void TetrixBoard::paintEvent(QPaintEvent *event){
 
     QFrame::paintEvent(event);
     QPainter painter(this);
-    //画出一个形状
+    //画出已经存在的形状
+    for(int i = 0; i <= BoardWidth; i++){
+        for(int j = 0; j <= BoardHeight; j++){
+            TetrixShape shape = shapeAt(i,j);
+            if(shape != NOShape){
+                drawSquare(painter,i * squareWidth(),j * squareHeight(),shape );
+            }
+        }
+    }
+
+    //画出当前的一个形状
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
             if(currentPiece.value(i,j) == 0){
@@ -37,6 +48,10 @@ void TetrixBoard::paintEvent(QPaintEvent *event){
 
  }
 
+/**
+ * @brief TetrixBoard::keyPressEvent 按键事件监听
+ * @param event
+ */
 void TetrixBoard::keyPressEvent(QKeyEvent *event){
     switch(event->key()){
     case Qt::Key_Left:
@@ -46,7 +61,9 @@ void TetrixBoard::keyPressEvent(QKeyEvent *event){
         tryMove(currentPiece,curX + 1,curY);
         break;
     case Qt::Key_Down:
-        tryMove(currentPiece,curX,curY+1);
+        if(!tryMove(currentPiece,curX,curY+1)){
+            pieceDroped(0);
+        }
         break;
     case Qt::Key_Up:
         tryMove(currentPiece,curX,curY - 1);
@@ -58,7 +75,35 @@ void TetrixBoard::keyPressEvent(QKeyEvent *event){
         tryMove(currentPiece.rotateRight(),curX,curY);
         break;
     default:
+        //事件传递
         QFrame::keyPressEvent(event);
+    }
+}
+
+void TetrixBoard::pieceDroped(int height){
+    for(int i = 0; i < 4; i++){
+        for(int j = 0; j < 4; j++){
+            if(currentPiece.value(i,j) == 0){
+                continue;
+            }
+            shapeAt(j + curX,i  + curY) = currentPiece.shape();
+        }
+    }
+    newPiece();
+}
+
+void TetrixBoard::newPiece(){
+    nextPiece.setRandomShape();
+    currentPiece = nextPiece;
+    curX = 0;
+    curY = 0;
+}
+
+void TetrixBoard::clearBoard(){
+    for(int i = 0; i <= BoardWidth; i++){
+        for(int j = 0; j <= BoardHeight; j++){
+            coordsBoard[i][j] = NOShape;
+        }
     }
 }
 
@@ -82,6 +127,8 @@ bool TetrixBoard::tryMove(const TetrixPiece &newPiece, int newX, int newY){
             if((i + newY) >= BoardHeight || (i + newY ) < 0){
                 return false;
             }else if((j + newX) >= BoardWidth || (j + newX) < 0){
+                return false;
+            }else if(shapeAt(j + newX , i + newY) != NOShape){
                 return false;
             }
         }

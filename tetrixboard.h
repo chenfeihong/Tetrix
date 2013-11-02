@@ -25,12 +25,16 @@ private:
     //根据游戏窗体大小、和行列数计算出每个方块的长度和宽度
     int squareWidth(){return contentsRect().width()/BoardWidth;}
     int squareHeight(){return contentsRect().height()/BoardHeight;}
-
-    //当前活动的形状
+    //向下落height的高度，将值存储到coordsBoard
+    void pieceDroped(int height);
+    TetrixShape &shapeAt(int x, int y){return coordsBoard[x][y];}
+    void clearBoard();
     TetrixPiece currentPiece;
-    //当前X y
+    TetrixPiece nextPiece;
+    void newPiece();
     int curX;
     int curY;
+    TetrixShape coordsBoard[BoardWidth + 1][BoardHeight + 1];
 
 };
 
