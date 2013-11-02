@@ -22,15 +22,17 @@ void TetrixBoard::paintEvent(QPaintEvent *event){
 
     QFrame::paintEvent(event);
     QPainter painter(this);
+    qDebug() << "Start:" << "CurX:" << curX << "CurY:" << curY;
     //画出一个形状
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
             if(currentPiece.value(i,j) == 0){
                 continue;
             }
-            int x = (i + curX) * squareWidth();
-            int y = (j + curY) * squareHeight();
-            drawSquare(painter,y,x,currentPiece.shape());
+            int x = (j + curX) * squareWidth();
+            int y = (i + curY) * squareHeight();
+            qDebug() << x << "," << y;
+            drawSquare(painter,x,y,currentPiece.shape());
         }
     }
 
@@ -48,7 +50,11 @@ void TetrixBoard::keyPressEvent(QKeyEvent *event){
         tryMove(currentPiece,curX,curY+1);
         break;
     case Qt::Key_Up:
-        tryMove(currentPiece,curX,curY-1);
+        tryMove(currentPiece.rotateRight(),curX,curY);
+        break;
+    case Qt::Key_Space:
+        tryMove(currentPiece.rotateLeft(),curX,curY);
+        break;
     default:
         QFrame::keyPressEvent(event);
     }

@@ -2,7 +2,7 @@
 #include "tetrixpiece.h"
 #include "stdlib.h"
 
-//形状 状态 x y  使用的4X4的模型定义每个方块的四种形态
+//形状 状态 y x  使用的4X4的模型定义每个方块的四种形态
 static const int coordsTable[8][4][4][4] = {
     //NOShape
     {
@@ -95,7 +95,7 @@ void TetrixPiece::setRandomShape(){
 TetrixPiece TetrixPiece::rotateLeft() const{
     TetrixPiece result;
     result.pieceShape = pieceShape;
-    result.pieceDirection = TetrixDirection(pieceDirection + 1);
+    result.pieceDirection = TetrixDirection(pieceDirection - 1);
     if(result.pieceDirection < 0){
         result.pieceDirection = LEFT;
     }
