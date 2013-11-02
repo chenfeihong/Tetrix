@@ -20,7 +20,7 @@ public:
     TetrixPiece rotateRight() const;
     //逆时针选择
     TetrixPiece rotateLeft() const;
-    int value(int x, int y){return coords[x][y];}
+    int value(int x, int y) const {return coords[x][y];}
 
 
 private:

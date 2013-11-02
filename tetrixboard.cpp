@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QKeyEvent>
 
+//颜色的数序与定义的形状顺序一直
 static const QRgb colorTable[8] = {
     0x000000, 0xCC6666, 0x66CC66, 0x6666CC,
     0xCCCC66, 0xCC66CC, 0x66CCCC, 0xDAAA00
@@ -13,7 +14,7 @@ static const QRgb colorTable[8] = {
 TetrixBoard::TetrixBoard(QWidget *parent) :
     QFrame(parent)
 {
-    currentPiece.setShape(LShape,UP);
+    currentPiece.setShape(SShape,UP);
     curX = 0;
     curY = 0;
 }
@@ -50,8 +51,11 @@ void TetrixBoard::keyPressEvent(QKeyEvent *event){
     case Qt::Key_Up:
         tryMove(currentPiece,curX,curY - 1);
         break;
-    case Qt::Key_Space:
+    case Qt::Key_A:
         tryMove(currentPiece.rotateLeft(),curX,curY);
+        break;
+    case Qt::Key_D:
+        tryMove(currentPiece.rotateRight(),curX,curY);
         break;
     default:
         QFrame::keyPressEvent(event);
@@ -66,20 +70,18 @@ void TetrixBoard::keyPressEvent(QKeyEvent *event){
  * @return
  */
 bool TetrixBoard::tryMove(const TetrixPiece &newPiece, int newX, int newY){
-
-    TetrixPiece tempPiece = newPiece;
+    //newPiece 由const 修饰，则只能访问实用const 修饰的成员函数或者方法
     //判断是否超出边界
-    if(newX < 0|| newY < 0 ){
-        return false;
-    }
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
-            if(tempPiece.value(i,j) == 0){
+            //如果模型中的值为零，则不画
+            if(newPiece.value(i,j) == 0){
                 continue;
             }
-            if((i + newY) >= BoardHeight){
+            //是否越界
+            if((i + newY) >= BoardHeight || (i + newY ) < 0){
                 return false;
-            }else if((j + newX) >= BoardWidth){
+            }else if((j + newX) >= BoardWidth || (j + newX) < 0){
                 return false;
             }
         }
