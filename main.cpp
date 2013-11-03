@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
 
     TetrixBoard board;
-    board.setFixedSize(400,440);
+    board.setFixedSize(400,460);
     board.show();
 
     return app.exec();

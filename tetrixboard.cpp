@@ -15,9 +15,9 @@ TetrixBoard::TetrixBoard(QWidget *parent) :
     QFrame(parent)
 {
     clearBoard();
-    currentPiece.setShape(SShape,UP);
-    curX = 0;
-    curY = 0;
+    currentPiece.setRandomShape();
+    curX = BoardWidth / 2 - 1;
+    curY = -4;
 }
 
 void TetrixBoard::paintEvent(QPaintEvent *event){
@@ -25,11 +25,11 @@ void TetrixBoard::paintEvent(QPaintEvent *event){
     QFrame::paintEvent(event);
     QPainter painter(this);
     //画出已经存在的形状
-    for(int i = 0; i <= BoardWidth; i++){
-        for(int j = 0; j <= BoardHeight; j++){
-            TetrixShape shape = shapeAt(i,j);
+    for(int i = 0; i < BoardHeight; i++){
+        for(int j = 0; j < BoardWidth; j++){
+            TetrixShape shape = shapeAt(j,i);
             if(shape != NOShape){
-                drawSquare(painter,i * squareWidth(),j * squareHeight(),shape );
+                drawSquare(painter,j * squareWidth(),i * squareHeight(),shape );
             }
         }
     }
@@ -89,20 +89,47 @@ void TetrixBoard::pieceDroped(int height){
             shapeAt(j + curX,i  + curY) = currentPiece.shape();
         }
     }
+    removeFullLines();
     newPiece();
+}
+
+void TetrixBoard::removeFullLines(){
+
+    for(int i = 0; i < BoardHeight; i++){
+        bool isFullLine = true;
+        for(int j = 0; j < BoardWidth; j++){
+            if(shapeAt(j,i) == NOShape){
+                isFullLine = false;
+                break;
+            }
+        }
+        if(isFullLine){
+            //消除当前的满行
+            for(int j = 0; j < BoardWidth; j++){
+                shapeAt(j,i) = NOShape;
+            }
+            //将上一行的数据向下移动一行
+            for(int k = i; k > 0; k--){
+                for(int j = 0; j < BoardWidth; j++){
+                    shapeAt(j,k) = shapeAt(j,k - 1);
+                }
+            }
+        }
+    }
+    update();
 }
 
 void TetrixBoard::newPiece(){
     nextPiece.setRandomShape();
     currentPiece = nextPiece;
-    curX = 0;
-    curY = 0;
+    curX = BoardWidth / 2 - 1;
+    curY = -4;
 }
 
 void TetrixBoard::clearBoard(){
-    for(int i = 0; i <= BoardWidth; i++){
-        for(int j = 0; j <= BoardHeight; j++){
-            coordsBoard[i][j] = NOShape;
+    for(int i = 0; i < BoardHeight; i++){
+        for(int j = 0; j < BoardWidth; j++){
+            coordsBoard[j][i] = NOShape;
         }
     }
 }
@@ -124,7 +151,7 @@ bool TetrixBoard::tryMove(const TetrixPiece &newPiece, int newX, int newY){
                 continue;
             }
             //是否越界
-            if((i + newY) >= BoardHeight || (i + newY ) < 0){
+            if((i + newY) >= BoardHeight){
                 return false;
             }else if((j + newX) >= BoardWidth || (j + newX) < 0){
                 return false;
@@ -162,4 +189,18 @@ void TetrixBoard::drawSquare(QPainter &painter, int x, int y, TetrixShape shape)
     painter.drawLine(x + 1, y + squareHeight() - 1,x + squareWidth() - 1 , y + squareHeight() - 1);
     painter.drawLine(x + squareWidth() - 1 , y + squareHeight() -1 ,x + squareWidth() - 1, y + 1);
 
+}
+
+void TetrixBoard::printCoordsBoard(){
+    qDebug() << "Start :";
+    QStringList info ;
+    for(int i = 0; i < BoardHeight; i++){
+        info << "{";
+        for(int j = 0; j < BoardWidth; j++){
+            TetrixShape shape = shapeAt(j,i);
+            info << QString::number(shape)+",";
+        }
+         info << "}\n";
+    }
+    qDebug() << info;
 }

@@ -17,7 +17,7 @@ protected:
     void keyPressEvent(QKeyEvent *event);
 private:
     //定义方块活动窗体的列数、行数
-    enum {BoardWidth = 10 ,BoardHeight = 11};
+    enum {BoardWidth = 20 ,BoardHeight = 23};
     //画出一个方块
     void drawSquare(QPainter &painter,int x,int y,TetrixShape shape);
     //移动方法
@@ -29,12 +29,14 @@ private:
     void pieceDroped(int height);
     TetrixShape &shapeAt(int x, int y){return coordsBoard[x][y];}
     void clearBoard();
+    void removeFullLines();
     TetrixPiece currentPiece;
     TetrixPiece nextPiece;
     void newPiece();
     int curX;
     int curY;
-    TetrixShape coordsBoard[BoardWidth + 1][BoardHeight + 1];
+    TetrixShape coordsBoard[BoardWidth][BoardHeight];
+    void printCoordsBoard();
 
 };
 
