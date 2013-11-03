@@ -3,6 +3,7 @@
 
 #include <QFrame>
 #include <QPainter>
+#include <QBasicTimer>
 
 #include "tetrixpiece.h"
 
@@ -12,9 +13,13 @@ class TetrixBoard : public QFrame
 public:
     TetrixBoard(QWidget *parent = 0);
 
+public slots:
+    void pause();
+
 protected:
     void paintEvent(QPaintEvent *event);
     void keyPressEvent(QKeyEvent *event);
+    void timerEvent(QTimerEvent *event);
 private:
     //定义方块活动窗体的列数、行数
     enum {BoardWidth = 20 ,BoardHeight = 23};
@@ -28,16 +33,17 @@ private:
     //向下落height的高度，将值存储到coordsBoard
     void pieceDroped(int height);
     TetrixShape &shapeAt(int x, int y){return coordsBoard[x][y];}
+    void newPiece();
     void clearBoard();
     void removeFullLines();
+
     TetrixPiece currentPiece;
     TetrixPiece nextPiece;
-    void newPiece();
     int curX;
     int curY;
+    bool isPaused;
     TetrixShape coordsBoard[BoardWidth][BoardHeight];
-    void printCoordsBoard();
-
+    QBasicTimer timer;
 };
 
 #endif // TETRIXBOARD_H

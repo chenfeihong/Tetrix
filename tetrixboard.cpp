@@ -4,6 +4,7 @@
 #include <QPainter>
 #include <QDebug>
 #include <QKeyEvent>
+#include <QTimerEvent>
 
 //颜色的数序与定义的形状顺序一直
 static const QRgb colorTable[8] = {
@@ -14,16 +15,20 @@ static const QRgb colorTable[8] = {
 TetrixBoard::TetrixBoard(QWidget *parent) :
     QFrame(parent)
 {
+
     clearBoard();
     currentPiece.setRandomShape();
     curX = BoardWidth / 2 - 1;
-    curY = -4;
+    curY = -1;
+    timer.start(1000/2,this);
+    isPaused = false;
 }
 
 void TetrixBoard::paintEvent(QPaintEvent *event){
 
     QFrame::paintEvent(event);
     QPainter painter(this);
+
     //画出已经存在的形状
     for(int i = 0; i < BoardHeight; i++){
         for(int j = 0; j < BoardWidth; j++){
@@ -46,12 +51,14 @@ void TetrixBoard::paintEvent(QPaintEvent *event){
         }
     }
 
+    //暂停
+    if(isPaused){
+        painter.drawText(contentsRect(),Qt::AlignCenter,tr("Pause"));
+        return;
+    }
+
  }
 
-/**
- * @brief TetrixBoard::keyPressEvent 按键事件监听
- * @param event
- */
 void TetrixBoard::keyPressEvent(QKeyEvent *event){
     switch(event->key()){
     case Qt::Key_Left:
@@ -65,8 +72,8 @@ void TetrixBoard::keyPressEvent(QKeyEvent *event){
             pieceDroped(0);
         }
         break;
-    case Qt::Key_Up:
-        tryMove(currentPiece,curX,curY - 1);
+    case Qt::Key_P:
+        pause();
         break;
     case Qt::Key_A:
         tryMove(currentPiece.rotateLeft(),curX,curY);
@@ -80,7 +87,18 @@ void TetrixBoard::keyPressEvent(QKeyEvent *event){
     }
 }
 
+void TetrixBoard::timerEvent(QTimerEvent *event){
+    if(timer.timerId() == event->timerId()){
+        if(!tryMove(currentPiece,curX,curY+1)){
+            pieceDroped(0);
+        }
+    }else{
+        QFrame::timerEvent(event);
+    }
+}
+
 void TetrixBoard::pieceDroped(int height){
+    //无法移动，则根据当前位置将方块赋值到board
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
             if(currentPiece.value(i,j) == 0){
@@ -123,7 +141,7 @@ void TetrixBoard::newPiece(){
     nextPiece.setRandomShape();
     currentPiece = nextPiece;
     curX = BoardWidth / 2 - 1;
-    curY = -4;
+    curY = -1;
 }
 
 void TetrixBoard::clearBoard(){
@@ -134,13 +152,17 @@ void TetrixBoard::clearBoard(){
     }
 }
 
-/**
- * @brief TetrixBoard::tryMove  移动
- * @param newPiece
- * @param newX
- * @param newY
- * @return
- */
+//暂停
+void TetrixBoard::pause(){
+    isPaused = !isPaused;
+    if(isPaused){
+        timer.stop();
+    }else{
+        timer.start(1000/2,this);
+    }
+    update();
+}
+
 bool TetrixBoard::tryMove(const TetrixPiece &newPiece, int newX, int newY){
     //newPiece 由const 修饰，则只能访问实用const 修饰的成员函数或者方法
     //判断是否超出边界
@@ -168,14 +190,6 @@ bool TetrixBoard::tryMove(const TetrixPiece &newPiece, int newX, int newY){
     return true;
 }
 
-/**
- * @brief TetrixBoard::drawSquare
- * @param painter
- * @param x 当前位置x坐标
- * @param y 当前位置y坐标
- * @param shape 该形状只是用来确定颜色值
- * 根据当前位置画出一个方块
- */
 void TetrixBoard::drawSquare(QPainter &painter, int x, int y, TetrixShape shape){
     QColor color = colorTable[(int)shape];
     //实用颜色填充方块
@@ -191,16 +205,3 @@ void TetrixBoard::drawSquare(QPainter &painter, int x, int y, TetrixShape shape)
 
 }
 
-void TetrixBoard::printCoordsBoard(){
-    qDebug() << "Start :";
-    QStringList info ;
-    for(int i = 0; i < BoardHeight; i++){
-        info << "{";
-        for(int j = 0; j < BoardWidth; j++){
-            TetrixShape shape = shapeAt(j,i);
-            info << QString::number(shape)+",";
-        }
-         info << "}\n";
-    }
-    qDebug() << info;
-}
