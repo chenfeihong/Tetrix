@@ -31,7 +31,7 @@ private:
     int squareWidth(){return contentsRect().width()/BoardWidth;}
     int squareHeight(){return contentsRect().height()/BoardHeight;}
     //向下落height的高度，将值存储到coordsBoard
-    void pieceDroped(int height);
+    void pieceDroped();
     TetrixShape &shapeAt(int x, int y){return coordsBoard[x][y];}
     void newPiece();
     void clearBoard();

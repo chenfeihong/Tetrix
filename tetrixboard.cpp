@@ -19,7 +19,7 @@ TetrixBoard::TetrixBoard(QWidget *parent) :
     clearBoard();
     currentPiece.setRandomShape();
     curX = BoardWidth / 2 - 1;
-    curY = -1;
+    curY = 0;
     timer.start(1000/2,this);
     isPaused = false;
 }
@@ -93,7 +93,7 @@ void TetrixBoard::keyPressEvent(QKeyEvent *event){
 void TetrixBoard::timerEvent(QTimerEvent *event){
     if(timer.timerId() == event->timerId()){
         if(!tryMove(currentPiece,curX,curY+1)){
-            pieceDroped(0);
+            pieceDroped();
         }
     }else{
         QFrame::timerEvent(event);
@@ -155,7 +155,13 @@ void TetrixBoard::newPiece(){
     nextPiece.setRandomShape();
     currentPiece = nextPiece;
     curX = BoardWidth / 2 - 1;
-    curY = -1;
+    curY = 0;
+
+    //如果无法移动表示已经到达顶部
+    if(!tryMove(currentPiece,curX,curY)){
+        currentPiece.setShape(NOShape);
+        timer.stop();
+    }
 }
 
 void TetrixBoard::clearBoard(){
