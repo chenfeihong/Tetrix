@@ -53,6 +53,7 @@ void TetrixBoard::paintEvent(QPaintEvent *event){
 
     //暂停
     if(isPaused){
+        painter.setPen(QColor(Qt::green).light());
         painter.drawText(contentsRect(),Qt::AlignCenter,tr("Pause"));
         return;
     }
