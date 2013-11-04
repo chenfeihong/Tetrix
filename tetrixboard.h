@@ -27,7 +27,7 @@ private:
     void drawSquare(QPainter &painter,int x,int y,TetrixShape shape);
     //移动方法
     bool tryMove(const TetrixPiece &newPiece,int newX,int newY);
-    //根据游戏窗体大小、和行列数计算出每个方块的长度和宽度
+    //根据游戏窗体大小、和行列数计算出每个方块的大小
     int squareWidth(){return contentsRect().width()/BoardWidth;}
     int squareHeight(){return contentsRect().height()/BoardHeight;}
     //向下落height的高度，将值存储到coordsBoard
