@@ -69,7 +69,7 @@ void TetrixBoard::keyPressEvent(QKeyEvent *event){
         break;
     case Qt::Key_Down:
         if(!tryMove(currentPiece,curX,curY+1)){
-            pieceDroped(0);
+            pieceDroped();
         }
         break;
     case Qt::Key_P:
@@ -108,10 +108,10 @@ void TetrixBoard::dropDown(){
         }
         ++newY;
     }
-    pieceDroped(0);
+    pieceDroped();
 }
 
-void TetrixBoard::pieceDroped(int height){
+void TetrixBoard::pieceDroped(){
     //无法移动，则根据当前位置将方块赋值到board
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
