@@ -81,6 +81,9 @@ void TetrixBoard::keyPressEvent(QKeyEvent *event){
     case Qt::Key_D:
         tryMove(currentPiece.rotateRight(),curX,curY);
         break;
+    case Qt::Key_Space:
+        dropDown();
+        break;
     default:
         //事件传递
         QFrame::keyPressEvent(event);
@@ -95,6 +98,17 @@ void TetrixBoard::timerEvent(QTimerEvent *event){
     }else{
         QFrame::timerEvent(event);
     }
+}
+
+void TetrixBoard::dropDown(){
+    int newY = curY;
+    while(newY < BoardHeight){
+        if(!tryMove(currentPiece,curX,curY+1)){
+            break;
+        }
+        ++newY;
+    }
+    pieceDroped(0);
 }
 
 void TetrixBoard::pieceDroped(int height){

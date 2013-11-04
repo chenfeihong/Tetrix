@@ -36,6 +36,7 @@ private:
     void newPiece();
     void clearBoard();
     void removeFullLines();
+    void dropDown();
 
     TetrixPiece currentPiece;
     TetrixPiece nextPiece;
