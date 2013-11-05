@@ -5,6 +5,10 @@
 #include <QDebug>
 #include <QKeyEvent>
 #include <QTimerEvent>
+#include <QPixmap>
+#include <QPainter>
+#include <QLabel>
+#include <QPointer>
 
 //颜色的数序与定义的形状顺序一直
 static const QRgb colorTable[8] = {
@@ -15,13 +19,44 @@ static const QRgb colorTable[8] = {
 TetrixBoard::TetrixBoard(QWidget *parent) :
     QFrame(parent)
 {
-
+    setFocusPolicy(Qt::StrongFocus);
     clearBoard();
-    currentPiece.setRandomShape();
-    curX = BoardWidth / 2 - 1;
-    curY = 0;
-    timer.start(1000/2,this);
     isPaused = false;
+
+    nextPiece.setRandomShape();
+}
+
+void TetrixBoard::start(){
+    if(isPaused){
+        return;
+    }
+
+    newPiece();
+    timer.start(1000/2,this);
+}
+
+void TetrixBoard::setNextPieceLabel(QLabel *label){
+    nextPieceLabel = label;
+}
+
+void TetrixBoard::showNextPiece(){
+    if(!nextPieceLabel){
+        return;
+    }
+
+    QPixmap pixmap(4 * squareWidth() , 4 * squareHeight());
+    QPainter painter(&pixmap);
+    for(int i = 0; i < 4; i++){
+        for(int j = 0; j < 4; j++){
+            if(nextPiece.value(i,j) == 0){
+                continue;
+            }
+            int x = j * squareWidth();
+            int y = i * squareHeight();
+            drawSquare(painter,x,y,nextPiece.shape());
+        }
+    }
+    nextPieceLabel->setPixmap(pixmap);
 }
 
 void TetrixBoard::paintEvent(QPaintEvent *event){
@@ -155,6 +190,7 @@ void TetrixBoard::removeFullLines(){
 void TetrixBoard::newPiece(){
     nextPiece.setRandomShape();
     currentPiece = nextPiece;
+    showNextPiece();
     curX = BoardWidth / 2 - 1;
     curY = 0;
 

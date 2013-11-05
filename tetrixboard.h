@@ -4,6 +4,8 @@
 #include <QFrame>
 #include <QPainter>
 #include <QBasicTimer>
+#include <QLabel>
+#include <QPointer>
 
 #include "tetrixpiece.h"
 
@@ -12,9 +14,11 @@ class TetrixBoard : public QFrame
     Q_OBJECT
 public:
     TetrixBoard(QWidget *parent = 0);
+    void setNextPieceLabel(QLabel *label);
 
 public slots:
     void pause();
+    void start();
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -36,9 +40,11 @@ private:
     void clearBoard();
     void removeFullLines();
     void dropDown();
+    void showNextPiece();
 
     TetrixPiece currentPiece;
     TetrixPiece nextPiece;
+    QPointer<QLabel> nextPieceLabel;
     int curX;
     int curY;
     bool isPaused;
