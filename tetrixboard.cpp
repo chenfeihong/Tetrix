@@ -19,6 +19,8 @@ static const QRgb colorTable[8] = {
 TetrixBoard::TetrixBoard(QWidget *parent) :
     QFrame(parent)
 {
+    setMidLineWidth(0);
+    setFrameStyle(QFrame::Panel | QFrame::Sunken);
     setFocusPolicy(Qt::StrongFocus);
     clearBoard();
     isPaused = false;
@@ -46,6 +48,7 @@ void TetrixBoard::showNextPiece(){
 
     QPixmap pixmap(4 * squareWidth() , 4 * squareHeight());
     QPainter painter(&pixmap);
+    painter.fillRect(pixmap.rect(),nextPieceLabel->palette().background());
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
             if(nextPiece.value(i,j) == 0){
@@ -188,8 +191,8 @@ void TetrixBoard::removeFullLines(){
 }
 
 void TetrixBoard::newPiece(){
-    nextPiece.setRandomShape();
     currentPiece = nextPiece;
+    nextPiece.setRandomShape();
     showNextPiece();
     curX = BoardWidth / 2 - 1;
     curY = 0;
@@ -253,8 +256,8 @@ void TetrixBoard::drawSquare(QPainter &painter, int x, int y, TetrixShape shape)
     painter.fillRect(x + 1 , y + 1 , squareWidth() - 2, squareHeight() -2,color);
     //设置颜色为浅色
     painter.setPen(color.light());
-    painter.drawLine(x , y + squareWidth() - 1 ,x , y);
-    painter.drawLine(x , y , x + squareHeight() - 1 , y);
+    painter.drawLine(x , y + squareHeight() - 1 ,x , y);
+    painter.drawLine(x , y , x + squareWidth() - 1 , y);
     painter.setPen(color.dark());
     //x + 1 y + 1是由于已经存在浅色的线条 -1 表示将像素宽度为1的线条画在方块内部
     painter.drawLine(x + 1, y + squareHeight() - 1,x + squareWidth() - 1 , y + squareHeight() - 1);

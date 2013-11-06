@@ -12,8 +12,9 @@ int main(int argc, char *argv[])
     TetrixWindow window;
     window.resize(800,460);
     window.show();
+
 //    TetrixBoard board;
-//    board.setFixedSize(400,460);
+//    board.setFixedSize(200,440);
 //    board.start();
 //    board.show();
 

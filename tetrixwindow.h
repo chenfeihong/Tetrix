@@ -11,17 +11,19 @@ class TetrixWindow : public QWidget
 {
     Q_OBJECT
 public:
-    TetrixWindow(QWidget *parent = 0);
+    TetrixWindow();
 
 private:
-    QLabel *createLable(const QString &text);
+    QLabel *createLabel(const QString &text);
 
     TetrixBoard *board;
     QLabel *nextPieceLabel;
-    QLCDNumber *levelLcd;
     QLCDNumber *scoreLcd;
+    QLCDNumber *levelLcd;
+    QLCDNumber *linesLcd;
     QPushButton *startButton;
     QPushButton *quitButton;
+    QPushButton *pauseButton;
 
 };
 
