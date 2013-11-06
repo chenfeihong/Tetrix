@@ -31,9 +31,9 @@ void TetrixBoard::start(){
     if(isPaused){
         return;
     }
-
+    qDebug() << "Line" << lineWidth() ;
     newPiece();
-    timer.start(1000/2,this);
+//    timer.start(1000/2,this);
 }
 
 void TetrixBoard::setNextPieceLabel(QLabel *label){
@@ -223,20 +223,21 @@ void TetrixBoard::pause(){
 }
 
 bool TetrixBoard::tryMove(const TetrixPiece &newPiece, int newX, int newY){
+    qDebug() << "newX" << newX << "newY" <<newY;
     //newPiece 由const 修饰，则只能访问实用const 修饰的成员函数或者方法
-    //判断是否超出边界
+    //是否越界
+    if((newPiece.getHeight() + newY) > BoardHeight){
+        return false;
+    }else if((newPiece.getWidth() + newX) > BoardWidth || newX < 0){
+        return false;
+    }
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
-            //如果模型中的值为零，则不画
+            //如果模型中的值为零，则跳过
             if(newPiece.value(i,j) == 0){
                 continue;
             }
-            //是否越界
-            if((i + newY) >= BoardHeight){
-                return false;
-            }else if((j + newX) >= BoardWidth || (j + newX) < 0){
-                return false;
-            }else if(shapeAt(j + newX , i + newY) != NOShape){
+            if(shapeAt(j + newX , i + newY) != NOShape){
                 return false;
             }
         }

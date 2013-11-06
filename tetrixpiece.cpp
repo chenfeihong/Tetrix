@@ -139,3 +139,29 @@ TetrixPiece TetrixPiece::rotateRight() const{
     }
     return result;
 }
+
+int TetrixPiece::getHeight() const{
+    int height = 0;
+    for(int i = 0; i < 4; i++){
+        for(int j = 0; j < 4; j++){
+            if(value(i,j) == 1){
+                ++height;
+                break;
+            }
+        }
+    }
+    return height;
+}
+
+int TetrixPiece::getWidth() const{
+    int width = 0;
+    for(int i = 0; i < 4; i++){
+        for(int j = 0; j < 4; j++){
+            if(value(j,i) == 1){
+                ++width;
+                break;
+            }
+        }
+    }
+    return width;
+}

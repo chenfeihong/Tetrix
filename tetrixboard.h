@@ -27,7 +27,7 @@ protected:
 
 private:
     //定义方块活动窗体的列数、行数
-    enum {BoardWidth = 10 ,BoardHeight = 22};
+    enum {BoardWidth = 4 ,BoardHeight = 4};
     //画出一个方块
     void drawSquare(QPainter &painter,int x,int y,TetrixShape shape);
     //移动方法

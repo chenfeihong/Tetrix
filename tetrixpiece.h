@@ -21,6 +21,8 @@ public:
     //逆时针选择
     TetrixPiece rotateLeft() const;
     int value(int x, int y) const {return coords[x][y];}
+    int getHeight() const;
+    int getWidth() const;
 
 
 private:
