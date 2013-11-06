@@ -7,11 +7,11 @@
 
 TetrixWindow::TetrixWindow()
 {
-    board = new TetrixBoard;
+    board = new TetrixBoard(this);
 
     nextPieceLabel = new QLabel;
     nextPieceLabel->setFrameStyle(QFrame::Box | QFrame::Raised);
-    nextPieceLabel->setAlignment(Qt::AlignCenter);
+    nextPieceLabel->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
     board->setNextPieceLabel(nextPieceLabel);
 
     scoreLcd = new QLCDNumber(5);
