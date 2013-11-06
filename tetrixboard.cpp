@@ -9,6 +9,7 @@
 #include <QPainter>
 #include <QLabel>
 #include <QPointer>
+#include <QSize>
 
 //颜色的数序与定义的形状顺序一直
 static const QRgb colorTable[8] = {
@@ -25,6 +26,16 @@ TetrixBoard::TetrixBoard(QWidget *parent) :
     isPaused = false;
 
     nextPiece.setRandomShape();
+}
+
+QSize TetrixBoard::sizeHint() const{
+    return QSize(BoardWidth * 15 + frameWidth() * 2,
+                 BoardHeight * 15 + frameWidth() * 2);
+}
+
+QSize TetrixBoard::minimumSizeHint() const{
+    return QSize(BoardWidth * 5 + frameWidth() * 2,
+                 BoardHeight * 5 + frameWidth() * 2);
 }
 
 void TetrixBoard::start(){

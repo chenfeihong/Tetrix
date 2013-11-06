@@ -15,7 +15,9 @@ class TetrixBoard : public QFrame
 public:
     TetrixBoard(QWidget *parent = 0);
     void setNextPieceLabel(QLabel *label);
-
+    //解决边框问题
+    QSize sizeHint() const;
+    QSize minimumSizeHint() const;
 public slots:
     void pause();
     void start();
@@ -27,7 +29,7 @@ protected:
 
 private:
     //定义方块活动窗体的列数、行数
-    enum {BoardWidth = 4 ,BoardHeight = 4};
+    enum {BoardWidth = 10 ,BoardHeight = 22};
     //画出一个方块
     void drawSquare(QPainter &painter,int x,int y,TetrixShape shape);
     //移动方法
