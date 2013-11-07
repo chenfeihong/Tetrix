@@ -17,13 +17,7 @@ private:
     QLabel *createLabel(const QString &text);
 
     TetrixBoard *board;
-    QLabel *nextPieceLabel;
-    QLCDNumber *scoreLcd;
-    QLCDNumber *levelLcd;
-    QLCDNumber *linesLcd;
-    QPushButton *startButton;
-    QPushButton *quitButton;
-    QPushButton *pauseButton;
+
 
 };
 

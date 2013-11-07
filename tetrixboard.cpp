@@ -20,7 +20,7 @@ static const QRgb colorTable[8] = {
 TetrixBoard::TetrixBoard(QWidget *parent) :
     QFrame(parent)
 {
-    //setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    setFrameStyle(QFrame::Box);
     setFocusPolicy(Qt::StrongFocus);
     clearBoard();
     isPaused = false;
@@ -28,17 +28,6 @@ TetrixBoard::TetrixBoard(QWidget *parent) :
     nextPiece.setRandomShape();
 }
 
-QSize TetrixBoard::sizeHint() const
-{
-    return QSize(BoardWidth * 15 + frameWidth() * 2,
-                 BoardHeight * 15 + frameWidth() * 2);
-}
-
-QSize TetrixBoard::minimumSizeHint() const
-{
-    return QSize(BoardWidth * 5 + frameWidth() * 2,
-                 BoardHeight * 5 + frameWidth() * 2);
-}
 
 void TetrixBoard::start(){
     if(isPaused){
@@ -79,21 +68,18 @@ void TetrixBoard::paintEvent(QPaintEvent *event){
     QFrame::paintEvent(event);
     QPainter painter(this);
     QRect rect = contentsRect();
-    //画边框线
-    painter.setPen(Qt::gray);
-    painter.drawRect(0,0,rect.width() - 1,rect.height() - 1);
 
     //画出已经存在的形状
     for(int i = 0; i < BoardHeight; i++){
         for(int j = 0; j < BoardWidth; j++){
             TetrixShape shape = shapeAt(j,i);
             if(shape != NOShape){
-                drawSquare(painter,rect.left() + j * squareWidth(),i * squareHeight(),shape );
+                drawSquare(painter,rect.left() + j * squareWidth(), i * squareHeight(),shape );
             }
         }
     }
 
-    //画出当前的一个形状
+    //画出当前的形状
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
             if(currentPiece.value(i,j) == 0){
@@ -101,10 +87,10 @@ void TetrixBoard::paintEvent(QPaintEvent *event){
             }
             int x = (j + curX) * squareWidth();
             int y = (i + curY) * squareHeight();
+            qDebug() << curX << x << y;
             drawSquare(painter,rect.left() + x,y,currentPiece.shape());
         }
     }
-
     //暂停
     if(isPaused){
         painter.setPen(QColor(Qt::green).light());
@@ -210,7 +196,7 @@ void TetrixBoard::newPiece(){
     currentPiece = nextPiece;
     nextPiece.setRandomShape();
     showNextPiece();
-    curX = BoardWidth / 2 - 1;
+    curX = BoardWidth / 2 - 1 ;
     curY = 0;
 
     //如果无法移动表示已经到达顶部
