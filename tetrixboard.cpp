@@ -20,7 +20,7 @@ static const QRgb colorTable[8] = {
 TetrixBoard::TetrixBoard(QWidget *parent) :
     QFrame(parent)
 {
-    setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    //setFrameStyle(QFrame::Panel | QFrame::Sunken);
     setFocusPolicy(Qt::StrongFocus);
     clearBoard();
     isPaused = false;
@@ -28,12 +28,14 @@ TetrixBoard::TetrixBoard(QWidget *parent) :
     nextPiece.setRandomShape();
 }
 
-QSize TetrixBoard::sizeHint() const{
+QSize TetrixBoard::sizeHint() const
+{
     return QSize(BoardWidth * 15 + frameWidth() * 2,
                  BoardHeight * 15 + frameWidth() * 2);
 }
 
-QSize TetrixBoard::minimumSizeHint() const{
+QSize TetrixBoard::minimumSizeHint() const
+{
     return QSize(BoardWidth * 5 + frameWidth() * 2,
                  BoardHeight * 5 + frameWidth() * 2);
 }
@@ -42,7 +44,7 @@ void TetrixBoard::start(){
     if(isPaused){
         return;
     }
-    qDebug() << "Line" << lineWidth() ;
+
     newPiece();
 //    timer.start(1000/2,this);
 }
@@ -76,13 +78,17 @@ void TetrixBoard::paintEvent(QPaintEvent *event){
 
     QFrame::paintEvent(event);
     QPainter painter(this);
+    QRect rect = contentsRect();
+    //画边框线
+    painter.setPen(Qt::gray);
+    painter.drawRect(0,0,rect.width() - 1,rect.height() - 1);
 
     //画出已经存在的形状
     for(int i = 0; i < BoardHeight; i++){
         for(int j = 0; j < BoardWidth; j++){
             TetrixShape shape = shapeAt(j,i);
             if(shape != NOShape){
-                drawSquare(painter,j * squareWidth(),i * squareHeight(),shape );
+                drawSquare(painter,rect.left() + j * squareWidth(),i * squareHeight(),shape );
             }
         }
     }
@@ -95,7 +101,7 @@ void TetrixBoard::paintEvent(QPaintEvent *event){
             }
             int x = (j + curX) * squareWidth();
             int y = (i + curY) * squareHeight();
-            drawSquare(painter,x,y,currentPiece.shape());
+            drawSquare(painter,rect.left() + x,y,currentPiece.shape());
         }
     }
 
@@ -234,22 +240,22 @@ void TetrixBoard::pause(){
 }
 
 bool TetrixBoard::tryMove(const TetrixPiece &newPiece, int newX, int newY){
-    qDebug() << "newX" << newX << "newY" <<newY;
     //newPiece 由const 修饰，则只能访问实用const 修饰的成员函数或者方法
     //是否越界
     if((newPiece.getHeight() + newY) > BoardHeight){
         return false;
     }else if((newPiece.getWidth() + newX) > BoardWidth || newX < 0){
         return false;
-    }
-    for(int i = 0; i < 4; i++){
-        for(int j = 0; j < 4; j++){
-            //如果模型中的值为零，则跳过
-            if(newPiece.value(i,j) == 0){
-                continue;
-            }
-            if(shapeAt(j + newX , i + newY) != NOShape){
-                return false;
+    }else{
+        for(int i = 0; i < 4; i++){
+            for(int j = 0; j < 4; j++){
+                //如果模型中的值为零，则跳过
+                if(newPiece.value(i,j) == 0){
+                    continue;
+                }
+                if(shapeAt(j + newX , i + newY) != NOShape){
+                    return false;
+                }
             }
         }
     }

@@ -15,7 +15,6 @@ class TetrixBoard : public QFrame
 public:
     TetrixBoard(QWidget *parent = 0);
     void setNextPieceLabel(QLabel *label);
-    //解决边框问题
     QSize sizeHint() const;
     QSize minimumSizeHint() const;
 public slots:
