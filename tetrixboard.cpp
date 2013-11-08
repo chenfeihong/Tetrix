@@ -20,12 +20,12 @@ static const QRgb colorTable[8] = {
 TetrixBoard::TetrixBoard(QWidget *parent) :
     QFrame(parent)
 {
-    setFrameStyle(QFrame::Box);
+    setFrameStyle(QFrame::NoFrame);
     setFocusPolicy(Qt::StrongFocus);
     clearBoard();
     isPaused = false;
 
-    nextPiece.setRandomShape();
+    nextPiece.setShape(JShape);
 }
 
 
@@ -68,13 +68,12 @@ void TetrixBoard::paintEvent(QPaintEvent *event){
     QFrame::paintEvent(event);
     QPainter painter(this);
     QRect rect = contentsRect();
-
     //画出已经存在的形状
     for(int i = 0; i < BoardHeight; i++){
         for(int j = 0; j < BoardWidth; j++){
             TetrixShape shape = shapeAt(j,i);
             if(shape != NOShape){
-                drawSquare(painter,rect.left() + j * squareWidth(), i * squareHeight(),shape );
+                drawSquare(painter,j * squareWidth(), i * squareHeight(),shape );
             }
         }
     }
@@ -87,8 +86,7 @@ void TetrixBoard::paintEvent(QPaintEvent *event){
             }
             int x = (j + curX) * squareWidth();
             int y = (i + curY) * squareHeight();
-            qDebug() << curX << x << y;
-            drawSquare(painter,rect.left() + x,y,currentPiece.shape());
+            drawSquare(painter,x,y,currentPiece.shape());
         }
     }
     //暂停
@@ -194,7 +192,7 @@ void TetrixBoard::removeFullLines(){
 
 void TetrixBoard::newPiece(){
     currentPiece = nextPiece;
-    nextPiece.setRandomShape();
+    nextPiece.setShape(JShape);
     showNextPiece();
     curX = BoardWidth / 2 - 1 ;
     curY = 0;

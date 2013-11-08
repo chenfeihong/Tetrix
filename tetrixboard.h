@@ -32,8 +32,8 @@ private:
     void drawSquare(QPainter &painter,int x,int y,TetrixShape shape);
     //移动方法
     bool tryMove(const TetrixPiece &newPiece,int newX,int newY);
-    int squareWidth(){return contentsRect().width() /BoardWidth;}
-    int squareHeight(){return contentsRect().height() /BoardHeight;}
+    int squareWidth(){return contentsRect().width() / BoardWidth;}
+    int squareHeight(){return contentsRect().height() / BoardHeight;}
     void pieceDroped();
     TetrixShape &shapeAt(int x, int y){return coordsBoard[x][y];}
     void newPiece();

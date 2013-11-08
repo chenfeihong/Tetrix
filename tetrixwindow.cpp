@@ -9,6 +9,7 @@
 TetrixWindow::TetrixWindow()
 {
     board = new TetrixBoard();
+
     QHBoxLayout *layout = new QHBoxLayout;
     layout->addWidget(board);
     setLayout(layout);
