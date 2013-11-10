@@ -9,13 +9,13 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-//    TetrixWindow window;
-//    window.show();
+    TetrixWindow window;
+    window.show();
 
-    TetrixBoard board;
-    board.resize(300,600);
-    board.start();
-    board.show();
+//    TetrixBoard board;
+//    board.resize(380,620);
+//    board.start();
+//    board.show();
 
     //初始化随机数种子
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));

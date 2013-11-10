@@ -20,6 +20,10 @@ public slots:
     void pause();
     void start();
 
+signals:
+    void levelChanged(int level);
+    void scoreChanged(int score);
+
 protected:
     void paintEvent(QPaintEvent *event);
     void keyPressEvent(QKeyEvent *event);
@@ -27,13 +31,12 @@ protected:
 
 private:
     //定义方块活动窗体的列数、行数
-    enum {BoardWidth = 15 ,BoardHeight = 30};
+    enum {BoardWidth = 18 ,BoardHeight = 30};
+    enum {GameBoardBorder = 1};
     //画出一个方块
     void drawSquare(QPainter &painter,int x,int y,TetrixShape shape);
     //移动方法
     bool tryMove(const TetrixPiece &newPiece,int newX,int newY);
-    int squareWidth(){return contentsRect().width() / BoardWidth;}
-    int squareHeight(){return contentsRect().height() / BoardHeight;}
     void pieceDroped();
     TetrixShape &shapeAt(int x, int y){return coordsBoard[x][y];}
     void newPiece();
@@ -48,8 +51,11 @@ private:
     int curX;
     int curY;
     bool isPaused;
+    bool isStarted;
     TetrixShape coordsBoard[BoardWidth][BoardHeight];
     QBasicTimer timer;
+    int level;
+    int score;
 };
 
 #endif // TETRIXBOARD_H

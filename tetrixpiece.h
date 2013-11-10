@@ -5,6 +5,8 @@
 enum TetrixShape {NOShape,IShape,OShape,TShape,LShape,JShape,SShape,ZShape};
 //朝向 coordsTable 从上之下的朝向均为顺时针
 enum TetrixDirection {UP,RIGHT,DOWN,LEFT};
+//Size
+enum TetrixSize{SquareHeight = 20 , SquareWidth = 20};
 
 class TetrixPiece
 {

@@ -24,8 +24,8 @@ TetrixBoard::TetrixBoard(QWidget *parent) :
     setFocusPolicy(Qt::StrongFocus);
     clearBoard();
     isPaused = false;
-
-    nextPiece.setShape(JShape);
+    isStarted = false;
+    nextPiece.setRandomShape();
 }
 
 
@@ -33,9 +33,17 @@ void TetrixBoard::start(){
     if(isPaused){
         return;
     }
-
+    isStarted = true;
+    clearBoard();
     newPiece();
-//    timer.start(1000/2,this);
+
+    level = 1;
+    score = 0;
+
+    emit levelChanged(level);
+    emit scoreChanged(score);
+
+    timer.start(1000/level,this);
 }
 
 void TetrixBoard::setNextPieceLabel(QLabel *label){
@@ -47,7 +55,7 @@ void TetrixBoard::showNextPiece(){
         return;
     }
 
-    QPixmap pixmap(4 * squareWidth() , 4 * squareHeight());
+    QPixmap pixmap(nextPiece.getWidth() * SquareWidth , nextPiece.getHeight() * SquareHeight);
     QPainter painter(&pixmap);
     painter.fillRect(pixmap.rect(),nextPieceLabel->palette().background());
     for(int i = 0; i < 4; i++){
@@ -55,8 +63,8 @@ void TetrixBoard::showNextPiece(){
             if(nextPiece.value(i,j) == 0){
                 continue;
             }
-            int x = j * squareWidth();
-            int y = i * squareHeight();
+            int x = j * SquareWidth;
+            int y = i * SquareHeight;
             drawSquare(painter,x,y,nextPiece.shape());
         }
     }
@@ -67,13 +75,15 @@ void TetrixBoard::paintEvent(QPaintEvent *event){
 
     QFrame::paintEvent(event);
     QPainter painter(this);
-    QRect rect = contentsRect();
+//    painter.setRenderHint(QPainter::Antialiasing,true);
+    painter.drawRect(GameBoardBorder - 1,GameBoardBorder - 1,SquareWidth * BoardWidth + 1,SquareHeight * BoardHeight + 1);
+
     //画出已经存在的形状
     for(int i = 0; i < BoardHeight; i++){
         for(int j = 0; j < BoardWidth; j++){
             TetrixShape shape = shapeAt(j,i);
             if(shape != NOShape){
-                drawSquare(painter,j * squareWidth(), i * squareHeight(),shape );
+                drawSquare(painter,GameBoardBorder + j * SquareWidth, GameBoardBorder + i * SquareHeight,shape );
             }
         }
     }
@@ -84,8 +94,8 @@ void TetrixBoard::paintEvent(QPaintEvent *event){
             if(currentPiece.value(i,j) == 0){
                 continue;
             }
-            int x = (j + curX) * squareWidth();
-            int y = (i + curY) * squareHeight();
+            int x = (j + curX) * SquareWidth + GameBoardBorder;
+            int y = (i + curY) * SquareHeight + GameBoardBorder;
             drawSquare(painter,x,y,currentPiece.shape());
         }
     }
@@ -99,25 +109,25 @@ void TetrixBoard::paintEvent(QPaintEvent *event){
  }
 
 void TetrixBoard::keyPressEvent(QKeyEvent *event){
+    if(!isStarted || isPaused || currentPiece.shape() == NOShape){
+        return;
+    }
     switch(event->key()){
-    case Qt::Key_Left:
+    case Qt::Key_A:
         tryMove(currentPiece,curX - 1,curY);
         break;
-    case Qt::Key_Right:
+    case Qt::Key_D:
         tryMove(currentPiece,curX + 1,curY);
         break;
-    case Qt::Key_Down:
+    case Qt::Key_S:
         if(!tryMove(currentPiece,curX,curY+1)){
             pieceDroped();
         }
         break;
-    case Qt::Key_P:
-        pause();
-        break;
-    case Qt::Key_A:
+    case Qt::Key_J:
         tryMove(currentPiece.rotateLeft(),curX,curY);
         break;
-    case Qt::Key_D:
+    case Qt::Key_K:
         tryMove(currentPiece.rotateRight(),curX,curY);
         break;
     case Qt::Key_Space:
@@ -166,6 +176,8 @@ void TetrixBoard::pieceDroped(){
 
 void TetrixBoard::removeFullLines(){
 
+    int numFullLines = 0;
+
     for(int i = 0; i < BoardHeight; i++){
         bool isFullLine = true;
         for(int j = 0; j < BoardWidth; j++){
@@ -176,6 +188,7 @@ void TetrixBoard::removeFullLines(){
         }
         if(isFullLine){
             //消除当前的满行
+            ++ numFullLines;
             for(int j = 0; j < BoardWidth; j++){
                 shapeAt(j,i) = NOShape;
             }
@@ -187,12 +200,24 @@ void TetrixBoard::removeFullLines(){
             }
         }
     }
-    update();
+
+    if(numFullLines > 0){
+        score += numFullLines;
+        emit scoreChanged(score);
+        if( score - (level - 1) * 5 >=  5){
+            ++level;
+            timer.start(1000/level,this);
+            emit levelChanged(level);
+        }
+        update();
+    }
+
+
 }
 
 void TetrixBoard::newPiece(){
     currentPiece = nextPiece;
-    nextPiece.setShape(JShape);
+    nextPiece.setRandomShape();
     showNextPiece();
     curX = BoardWidth / 2 - 1 ;
     curY = 0;
@@ -201,6 +226,7 @@ void TetrixBoard::newPiece(){
     if(!tryMove(currentPiece,curX,curY)){
         currentPiece.setShape(NOShape);
         timer.stop();
+        isStarted = false;
     }
 }
 
@@ -214,6 +240,9 @@ void TetrixBoard::clearBoard(){
 
 //暂停
 void TetrixBoard::pause(){
+    if(!isStarted){
+        return;
+    }
     isPaused = !isPaused;
     if(isPaused){
         timer.stop();
@@ -254,15 +283,15 @@ bool TetrixBoard::tryMove(const TetrixPiece &newPiece, int newX, int newY){
 void TetrixBoard::drawSquare(QPainter &painter, int x, int y, TetrixShape shape){
     QColor color = colorTable[(int)shape];
     //实用颜色填充方块
-    painter.fillRect(x + 1 , y + 1 , squareWidth() - 2, squareHeight() -2,color);
+    painter.fillRect(x + 1 , y + 1 , SquareWidth - 2, SquareHeight -2,color);
     //设置颜色为浅色
     painter.setPen(color.light());
-    painter.drawLine(x , y + squareHeight() - 1 ,x , y);
-    painter.drawLine(x , y , x + squareWidth() - 1 , y);
+    painter.drawLine(x , y + SquareHeight - 1 ,x , y);
+    painter.drawLine(x , y , x + SquareWidth - 1 , y);
     painter.setPen(color.dark());
     //x + 1 y + 1是由于已经存在浅色的线条 -1 表示将像素宽度为1的线条画在方块内部
-    painter.drawLine(x + 1, y + squareHeight() - 1,x + squareWidth() - 1 , y + squareHeight() - 1);
-    painter.drawLine(x + squareWidth() - 1 , y + squareHeight() -1 ,x + squareWidth() - 1, y + 1);
+    painter.drawLine(x + 1, y + SquareHeight - 1,x + SquareWidth - 1 , y + SquareHeight - 1);
+    painter.drawLine(x + SquareWidth - 1 , y + SquareHeight -1 ,x + SquareWidth - 1, y + 1);
 
 }
 
