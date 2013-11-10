@@ -63,8 +63,8 @@ void TetrixBoard::showNextPiece(){
             if(nextPiece.value(i,j) == 0){
                 continue;
             }
-            int x = j * SquareWidth;
-            int y = i * SquareHeight;
+            int x = (j - nextPiece.x()) * SquareWidth;
+            int y = (i - nextPiece.y())  * SquareHeight;
             drawSquare(painter,x,y,nextPiece.shape());
         }
     }
@@ -75,7 +75,8 @@ void TetrixBoard::paintEvent(QPaintEvent *event){
 
     QFrame::paintEvent(event);
     QPainter painter(this);
-//    painter.setRenderHint(QPainter::Antialiasing,true);
+    painter.setPen(Qt::gray);
+    //游戏边框
     painter.drawRect(GameBoardBorder - 1,GameBoardBorder - 1,SquareWidth * BoardWidth + 1,SquareHeight * BoardHeight + 1);
 
     //画出已经存在的形状
@@ -83,7 +84,9 @@ void TetrixBoard::paintEvent(QPaintEvent *event){
         for(int j = 0; j < BoardWidth; j++){
             TetrixShape shape = shapeAt(j,i);
             if(shape != NOShape){
-                drawSquare(painter,GameBoardBorder + j * SquareWidth, GameBoardBorder + i * SquareHeight,shape );
+                int x = GameBoardBorder + j * SquareWidth;
+                int y = GameBoardBorder + i * SquareHeight;
+                drawSquare(painter, x, y,shape);
             }
         }
     }
@@ -94,8 +97,8 @@ void TetrixBoard::paintEvent(QPaintEvent *event){
             if(currentPiece.value(i,j) == 0){
                 continue;
             }
-            int x = (j + curX) * SquareWidth + GameBoardBorder;
-            int y = (i + curY) * SquareHeight + GameBoardBorder;
+            int x = (j - currentPiece.x() + curX) * SquareWidth + GameBoardBorder;
+            int y = (i - currentPiece.y() + curY) * SquareHeight + GameBoardBorder;
             drawSquare(painter,x,y,currentPiece.shape());
         }
     }
@@ -113,13 +116,13 @@ void TetrixBoard::keyPressEvent(QKeyEvent *event){
         return;
     }
     switch(event->key()){
-    case Qt::Key_A:
+    case Qt::Key_Left:
         tryMove(currentPiece,curX - 1,curY);
         break;
-    case Qt::Key_D:
+    case Qt::Key_Right:
         tryMove(currentPiece,curX + 1,curY);
         break;
-    case Qt::Key_S:
+    case Qt::Key_Down:
         if(!tryMove(currentPiece,curX,curY+1)){
             pieceDroped();
         }
@@ -127,7 +130,7 @@ void TetrixBoard::keyPressEvent(QKeyEvent *event){
     case Qt::Key_J:
         tryMove(currentPiece.rotateLeft(),curX,curY);
         break;
-    case Qt::Key_K:
+    case Qt::Key_Up:
         tryMove(currentPiece.rotateRight(),curX,curY);
         break;
     case Qt::Key_Space:
@@ -167,7 +170,7 @@ void TetrixBoard::pieceDroped(){
             if(currentPiece.value(i,j) == 0){
                 continue;
             }
-            shapeAt(j + curX,i  + curY) = currentPiece.shape();
+            shapeAt(j - currentPiece.x() + curX,i - currentPiece.y() + curY) = currentPiece.shape();
         }
     }
     removeFullLines();
@@ -266,7 +269,7 @@ bool TetrixBoard::tryMove(const TetrixPiece &newPiece, int newX, int newY){
                 if(newPiece.value(i,j) == 0){
                     continue;
                 }
-                if(shapeAt(j + newX , i + newY) != NOShape){
+                if(shapeAt(j - currentPiece.x() + newX , i - currentPiece.y() + newY) != NOShape){
                     return false;
                 }
             }

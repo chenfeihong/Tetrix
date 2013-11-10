@@ -25,6 +25,8 @@ public:
     int value(int x, int y) const {return coords[x][y];}
     int getHeight() const;
     int getWidth() const;
+    int x() const;
+    int y() const;
 
 
 private:

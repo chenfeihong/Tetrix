@@ -10,7 +10,7 @@ TetrixWindow::TetrixWindow()
 {
     board = new TetrixBoard();
     nextPieceLabel = new QLabel();
-    nextPieceLabel->setFrameStyle(QFrame::Box);
+    nextPieceLabel->setFrameStyle(QFrame::NoFrame);
     nextPieceLabel->setAlignment(Qt::AlignCenter);
     nextPieceLabel->setFixedWidth(80);
     nextPieceLabel->setFixedHeight(80);
@@ -55,7 +55,7 @@ TetrixWindow::TetrixWindow()
 
     setLayout(layout);
     setWindowTitle(tr("Tetrix"));
-    resize(480, 640);
+    setFixedSize(470, 624);
 }
 
 
