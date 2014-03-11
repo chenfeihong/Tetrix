@@ -184,37 +184,23 @@ function tryMove(){
 	currentShape.x = currentShape.x < 0 ? currentShape.x += 1 : currentShape.x;
 	currentShape.y = currentShape.y < 0 ? currentShape.y += 1 : currentShape.y;
 	//右边、下边越界
-	//console.log("y: "+ currentShape.y);
-	//console.log("width: "+ currentShape.maxX() + "; height: " + currentShape.maxY());
+	console.log("y: "+ currentShape.y);
+	console.log("width: "+ currentShape.maxX() + "; height: " + currentShape.maxY());
 	if(currentShape.x + currentShape.maxX() > column){
 		currentShape.x -= 1;
 		return false;
-	}else if(currentShape.Y + currentShape.maxY() > column){
+	}
+	if(currentShape.y + currentShape.maxY() > row){
 		currentShape.y -= 1;
 		return false;
-	}else{
-		for(var i = 0; i < 4; i++){
-			for(var j = 0; j < 4; j++){
-				if(shapAt(currentShape.x - currentShape.marginLeft() + i,selectedShape.y - selectedShape.marginTop() + j)){
-					return false;
-				}
+	}
+	for(var i = 0; i < 4; i++){
+		for(var j = 0; j < 4; j++){
+			if(shapeAt(currentShape.x - currentShape.marginLeft() + i,currentShape.y - currentShape.marginTop() + j)){
+				return false;
 			}
 		}
 	}
-		//else if(currentShape.y + currentShape.maxY() == row){ //如果已经移动到底部
-		//for(var i = 0; i < 4; i++){
-		//	for(var j = 0; j < 4; j++){
-		//		if(currentShape.shape[i][j] != 0){
-					//console.log((currentShape.x + i) + " " + (currentShape.y + j));
-		//			coords[currentShape.y + j][currentShape.x + i] = currentShape.color;
-		//		}
-		//	}
-		//}
-		//currentShape = nextShape;
-		//nextShape = createShape();
-		//}
-	//刷新重绘
-	update();
 	return true;
 }
 
@@ -226,7 +212,7 @@ function randomNumber(seed){
 
 //查询该处是否已经存在方块
 function shapeAt(x,y){
-	console.log(x+" "+y);
+	//console.log(x+" "+y);
 	var color = coords[x][y];
 	if(color){
 		return true;
@@ -250,7 +236,20 @@ document.onkeydown = function(e){
 	}else if(e.keyCode == 40){	//down
 		currentShape.y += 1;
 	}
-	tryMove();
+	if(!tryMove()){	//无法移动则将当前Shape赋值给全局的二维数组
+		for(var i = 0; i < 4; i++){
+			for(var j = 0; j < 4; j++){
+				if(currentShape.shape[i][j] != 0){
+					//console.log((currentShape.x + i) + " " + (currentShape.y + j));
+					coords[currentShape.y + j][currentShape.x + i] = currentShape.color;
+				}
+			}
+		}
+		currentShape = nextShape;
+		nextShape = createShape();	
+	}
+	//刷新重绘
+	update();
 }
 
 //擦除所有然后重新绘制 --8
