@@ -134,7 +134,7 @@ function Shape(){ //形状对象
 		return count;
 	};
 	this.toString = function(){
-		console.log("[x : "+this.x+" y:"+this.y+" maxX:"+this.maxX()+" maxY:"+this.maxY()+" marginLeft:"+this.marginLeft()+" marginTop:"+this.marginTop()+"]");
+		return "[x : "+this.x+" y:"+this.y+" maxX:"+this.maxX()+" maxY:"+this.maxY()+" marginLeft:"+this.marginLeft()+" marginTop:"+this.marginTop()+"]";
 	};
 }
 
@@ -160,6 +160,7 @@ function drawBoard(squareWidth,squareHeight,row,column){
 //绘制单个格的背景 -- 2
 function drawCell(x,y,color){
  	var tr = document.getElementById("tr"+y);
+	if(!tr){return;};
 	var cell = tr.cells[x];
 	cell.style.backgroundColor = color;
 	cell.style.width = squareWidth;
@@ -192,6 +193,7 @@ function tryMove(shape,newX,newY){
 	}else{
 		for(var i = 0; i < 4; i++){
 			for(var j = 0; j < 4; j++){
+				if(newY + j - shape.marginTop() < 0){ continue}; //方块的起始位置为负
 				if(shape.shape[i][j] != 0 && coords[newY + j - shape.marginTop()][newX + i - shape.marginLeft()]){
 					return false;
 				}
@@ -220,6 +222,7 @@ document.onkeydown = function(e){
 		if(!tryMove(currentShape,currentShape.x,currentShape.y + 1)){
 			for(var i = 0; i < 4; i++){
 				for(var j = 0; j < 4; j++){
+					if(currentShape.y + j - currentShape.marginTop() < 0){ return;} //如果最后无法
 					if(currentShape.shape[i][j] != 0){
 						coords[currentShape.y + j - currentShape.marginTop()][currentShape.x + i - currentShape.marginLeft()] = currentShape.color;
 					}
@@ -260,6 +263,8 @@ function createShape(){
 	newShape.direction = Math.floor(Math.random() * 4);
 	newShape.shape = shapes[newShape.index][newShape.direction];
 	newShape.color = colors[newShape.index];
+	newShape.x = column/2 - 1;
+	newShape.y =  -2;
 	return newShape;
 }
 
