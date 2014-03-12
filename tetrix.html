@@ -5,10 +5,12 @@
 		*{
 			margin:0px;
 		}
-		#board{
+		#board,#next{
 			background-color:white;
 			border:1px solid #ccc;
 			border-spacing:0px;
+			float:left;
+			margin-left:5px;
 		}
 		.square{
 			border-left:1px solid #fff;
@@ -20,5 +22,8 @@
 </head>
 <body>
 	<table id="board"></table>
+	<table id="next"></table></br>
+	<input type = "button" value = "Pause" onclick = "pause(this)" /></br>
+	<input type = "button" value = "Restart" onclick = "restart()"/>
 </body>
 </html>
